@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator UUID v4 Modern</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .copy-toast {
+            visibility: hidden;
+            min-width: 200px;
+            margin-left: -100px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            transition: 0.3s;
+        }
+        .copy-toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+    <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <!-- Header -->
+        <div class="bg-indigo-600 p-8 text-white text-center">
+            <h1 class="text-3xl font-bold mb-2">Generator UUID v4</h1>
+            <p class="text-indigo-100">Buat identitas unik secara instan dengan aman.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="p-8">
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Jumlah UUID</label>
+                    <input type="number" id="uuidCount" value="1" min="1" max="100" 
+                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="generateUUIDs()" 
+                        class="w-full sm:w-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-indigo-200 transition-all transform active:scale-95">
+                        Generate Baru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Area -->
+            <div class="relative">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-slate-500">Hasil Generator:</span>
+                    <div class="flex gap-2">
+                        <button onclick="copyAll()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold px-2 py-1 bg-indigo-50 rounded">Salin Semua</button>
+                        <button onclick="downloadAsTxt()" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold px-2 py-1 bg-emerald-50 rounded">Unduh .txt</button>
+                    </div>
+                </div>
+                <div id="results" class="bg-slate-50 border border-slate-200 rounded-xl p-4 min-h-[200px] max-h-[400px] overflow-y-auto space-y-2">
+                    <!-- UUIDs will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="bg-slate-50 p-6 border-t border-slate-200 text-slate-600 text-sm">
+            <h3 class="font-bold text-slate-800 mb-2">Apa itu UUID v4?</h3>
+            <p>UUID (Universally Unique Identifier) versi 4 adalah standar identifikasi yang dihasilkan secara acak. Probabilitas duplikasi sangat kecil sehingga dianggap unik di seluruh dunia tanpa perlu koordinasi terpusat.</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="copy-toast">Berhasil disalin ke papan klip!</div>
+
+    <script>
+        // Fungsi untuk membuat UUID v4 secara manual (Standar RFC 4122)
+        function createUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function generateUUIDs() {
+            const countInput = document.getElementById('uuidCount');
+            const resultsContainer = document.getElementById('results');
+            let count = parseInt(countInput.value);
+
+            // Validasi input
+            if (isNaN(count) || count < 1) count = 1;
+            if (count > 500) count = 500; // Limit untuk performa browser
+
+            resultsContainer.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                const uuid = createUUID();
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between group p-2 hover:bg-white hover:shadow-sm rounded transition-all border border-transparent hover:border-slate-100';
+                div.innerHTML = `
+                    <code class="mono text-indigo-600 font-medium break-all text-sm md:text-base">${uuid}</code>
+                    <button onclick="copyOne('${uuid}')" class="ml-2 p-2 text-slate-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                        </svg>
+                    </button>
+                `;
+                resultsContainer.appendChild(div);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message || "Berhasil disalin!";
+            toast.className = "copy-toast show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function copyOne(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast("UUID disalin!");
+        }
+
+        function copyAll() {
+            const codes = document.querySelectorAll('#results code');
+            if (codes.length === 0) return;
+            
+            const allText = Array.from(codes).map(c => c.innerText).join('\n');
+            const el = document.createElement('textarea');
+            el.value = allText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast(`${codes.length} UUID disalin!`);
+        }
+
+        function downloadAsTxt() {
+            const codes = document.querySelectorAll('#results code');
+            if (codes.length === 0) return;
+
+            const content = Array.from(codes).map(c => c.innerText).join('\n');
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `uuids_${new Date().getTime()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Generate satu saat pertama kali buka
+        window.onload = generateUUIDs;
+    </script>
+</body>
+</html>
+
