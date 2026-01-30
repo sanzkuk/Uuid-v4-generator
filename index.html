@@ -2,223 +2,242 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCBE Studio v5.4 - Fix Encoding & BP Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Manifest Studio v3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #e4e4e7; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; }
-        input { background: #27272a !important; border: 1px solid #3f3f46 !important; color: #fff !important; font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; width: 100%; }
-        .tab-btn { padding: 12px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: 0.2s; border-bottom: 2px solid transparent; opacity: 0.6; cursor: pointer; }
-        .tab-active { border-color: #3b82f6; color: #3b82f6; opacity: 1; background: rgba(59, 130, 246, 0.05); }
-        .btn-gen { background: linear-gradient(135deg, #2563eb, #1d4ed8); cursor: pointer; }
-        .toggle-ui { cursor: pointer; width: 40px; height: 20px; background: #3f3f46; border-radius: 20px; position: relative; transition: 0.3s; }
-        .toggle-ui.active { background: #3b82f6; }
-        .toggle-circle { width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
-        .toggle-ui.active .toggle-circle { left: 22px; }
+        :root {
+            --rp-color: #4caf50;
+            --bp-color: #f44336;
+            --bg-dark: #121212;
+            --card-bg: #1e1e26;
+            --input-bg: #2d2d3a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        /* Navigasi Tab Tetap Di Atas */
+        .tabs-header {
+            display: flex;
+            background: #15151b;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 11px;
+            text-align: center;
+            background: #252530;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        /* Status Aktif Tombol */
+        .tab-btn.active-rp { background: var(--rp-color) !important; color: white !important; }
+        .tab-btn.active-bp { background: var(--bp-color) !important; color: white !important; }
+
+        .content { padding: 20px; }
+
+        .field { margin-bottom: 15px; }
+        label { display: block; font-size: 10px; font-weight: 600; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
+
+        input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 2px solid #333;
+            padding: 12px;
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .btn-copy { background: #444; }
+        .btn-dl { background: #007acc; }
+
+        /* Area Kode */
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00ff87;
+            border: 1px solid #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 10px;
+        }
+
+        .help-text {
+            font-size: 10px;
+            color: #ff9800;
+            margin-bottom: 10px;
+            display: none;
+            background: rgba(255, 152, 0, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+        }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
-        <header class="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-                <h1 class="text-2xl font-extrabold text-white">MCBE Studio <span class="text-blue-500 text-sm">v5.4</span></h1>
-                <p class="text-zinc-500 text-sm">BP Panduan 1.16.100 & Script API 1.21.130+</p>
-            </div>
-            <button onclick="generateFiles(true)" class="btn-gen text-white px-8 py-3 rounded-lg font-bold uppercase text-xs shadow-lg">Refresh Semua Kode</button>
-        </header>
+<body>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 space-y-5 max-h-[85vh] overflow-y-auto pr-2">
-                
-                <div class="card p-5 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-white font-bold text-xs uppercase">Server UI Module</h2>
-                        <p class="text-[9px] text-zinc-500">Tambahkan @minecraft/server-ui ke script</p>
-                    </div>
-                    <div id="ui-toggle" class="toggle-ui" onclick="toggleUI()">
-                        <div class="toggle-circle"></div>
-                    </div>
-                </div>
-
-                <div class="card p-5">
-                    <h2 class="text-blue-400 font-bold mb-3 text-[10px] uppercase">Entity Base</h2>
-                    <div class="space-y-3">
-                        <input type="text" id="ent_id" value="sz:lenmj" placeholder="Identifier" oninput="generateFiles()">
-                    </div>
-                </div>
-
-                <div class="card p-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-emerald-400 font-bold text-[10px] uppercase tracking-widest">Events (BP)</h2>
-                        <button onclick="addRow('bp-events')" class="text-[10px] bg-zinc-800 px-3 py-1 rounded text-white hover:bg-zinc-700">ADD EVENT</button>
-                    </div>
-                    <div id="bp-events" class="space-y-2"></div>
-                </div>
-
-                <div class="card p-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-purple-400 font-bold text-[10px] uppercase tracking-widest">Animations (RP)</h2>
-                        <button onclick="addRow('rp-anims')" class="text-[10px] bg-zinc-800 px-3 py-1 rounded text-white hover:bg-zinc-700">ADD ANIM</button>
-                    </div>
-                    <div id="rp-anims" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-8 flex flex-col h-[85vh]">
-                <div class="flex bg-zinc-900 p-1 rounded-t-xl border border-zinc-800 overflow-x-auto">
-                    <button onclick="tab('bp_ent')" id="t-bp_ent" class="tab-btn">BP Entity</button>
-                    <button onclick="tab('rp_ent')" id="t-rp_ent" class="tab-btn">RP Entity</button>
-                    <button onclick="tab('bp_man')" id="t-bp_man" class="tab-btn">BP Man</button>
-                    <button onclick="tab('rp_man')" id="t-rp_man" class="tab-btn">RP Man</button>
-                    <button onclick="tab('js')" id="t-js" class="tab-btn">main.js</button>
-                </div>
-                <div class="relative flex-1 min-h-0">
-                    <button onclick="copyCode()" class="absolute top-4 right-4 bg-blue-600 text-white text-[10px] font-bold px-4 py-2 rounded shadow-lg z-10">COPY</button>
-                    <pre id="output" class="w-full h-full bg-zinc-950 p-6 rounded-b-xl border-x border-b border-zinc-800 text-[11px] mono text-blue-300 overflow-auto"></pre>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <div class="tabs-header">
+        <button id="btnRP" class="tab-btn active-rp" onclick="toggleMode('rp')">🎨 RESOURCE</button>
+        <button id="btnBP" class="tab-btn" onclick="toggleMode('bp')">⚙️ BEHAVIOR</button>
     </div>
 
-    <script>
-        let currentTab = 'bp_ent';
-        let storage = {};
-        let uuids = {};
-        let uiEnabled = false;
+    <div class="content">
+        <div id="helpMsg" class="help-text">
+            ⚠️ <b>Penting:</b> Masukkan UUID Header dari Resource Pack Anda di bawah agar BP ini terhubung.
+        </div>
 
-        function toggleUI() {
-            uiEnabled = !uiEnabled;
-            document.getElementById('ui-toggle').classList.toggle('active');
-            generateFiles();
+        <div class="field">
+            <label>Nama Pack</label>
+            <input type="text" id="pName" value="My New Pack" oninput="updateJSON()">
+        </div>
+
+        <div class="field" id="bpDependency" style="display: none;">
+            <label>Link RP UUID (Header)</label>
+            <input type="text" id="rpUUID" placeholder="Tempel UUID RP di sini..." oninput="updateJSON()">
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-copy" onclick="copyJSON()">📋 SALIN</button>
+            <button class="btn btn-dl" onclick="downloadJSON()">💾 SIMPAN</button>
+        </div>
+
+        <pre id="codeArea"></pre>
+    </div>
+</div>
+
+<script>
+    let mode = 'rp';
+    let idData = {
+        rp: { h: crypto.randomUUID(), m: crypto.randomUUID() },
+        bp: { h: crypto.randomUUID(), m: crypto.randomUUID() }
+    };
+
+    function toggleMode(target) {
+        mode = target;
+        
+        // Update tampilan tombol tab
+        document.getElementById('btnRP').classList.toggle('active-rp', mode === 'rp');
+        document.getElementById('btnBP').classList.toggle('active-bp', mode === 'bp');
+
+        // Tampilkan/Sembunyikan input khusus BP
+        const depBox = document.getElementById('bpDependency');
+        const help = document.getElementById('helpMsg');
+        
+        if (mode === 'bp') {
+            depBox.style.display = 'block';
+            help.style.display = 'block';
+        } else {
+            depBox.style.display = 'none';
+            help.style.display = 'none';
         }
+        
+        updateJSON();
+    }
 
-        function addRow(id, k="", v="") {
-            const container = document.getElementById(id);
-            const div = document.createElement('div');
-            div.className = 'flex gap-2';
-            div.innerHTML = `<input type="text" placeholder="Key" class="k flex-1" value="${k}"><input type="text" placeholder="Value" class="v flex-[1.5]" value="${v}"><button onclick="this.parentElement.remove();generateFiles()" class="text-zinc-500 px-2">X</button>`;
-            container.appendChild(div);
-            div.querySelectorAll('input').forEach(i => i.addEventListener('input', () => generateFiles()));
-        }
+    function updateJSON() {
+        const name = document.getElementById('pName').value || "Unnamed";
+        const rpLink = document.getElementById('rpUUID').value;
+        const currentIds = idData[mode];
 
-        function generateFiles(resetUUID = false) {
-            if (resetUUID || !uuids.bph) {
-                uuids = { bph: crypto.randomUUID(), bpm: crypto.randomUUID(), bps: crypto.randomUUID(), rph: crypto.randomUUID(), rpm: crypto.randomUUID() };
-            }
-
-            const id = document.getElementById('ent_id').value;
-
-            // BP ENTITY (Berdasarkan panduan yang kamu berikan)
-            const bpEnt = {
-                format_version: "1.16.100",
-                "minecraft:entity": {
-                    description: { identifier: id, is_spawnable: true, is_summonable: true, is_experimental: false },
-                    component_groups: {},
-                    components: {
-                        "minecraft:tick_world": { never_despawn: true, radius: 1 },
-                        "minecraft:type_family": { family: ["mob", "inanimate"] },
-                        "minecraft:collision_box": { height: 0, width: 0 },
-                        "minecraft:health": { value: 1, max: 1 },
-                        "minecraft:nameable": { alwaysShow: false, allowNameTagRenaming: true },
-                        "minecraft:physics": { has_gravity: false },
-                        "minecraft:pushable": { is_pushable: false, is_pushable_by_piston: true },
-                        "minecraft:movement": { value: 0.3, max: 0.3 }
-                    },
-                    events: {}
+        const manifest = {
+            format_version: 2,
+            header: {
+                name: name,
+                description: "Generated by Studio",
+                uuid: currentIds.h,
+                version: [1, 0, 0],
+                min_engine_version: [1, 21, 0]
+            },
+            modules: [
+                {
+                    description: "Module Pack",
+                    type: (mode === 'rp' ? "resources" : "data"),
+                    uuid: currentIds.m,
+                    version: [1, 0, 0]
                 }
-            };
-
-            document.querySelectorAll('#bp-events div').forEach(row => {
-                const k = row.querySelector('.k').value;
-                const v = row.querySelector('.v').value;
-                if(k && v) {
-                    bpEnt["minecraft:entity"].component_groups[v] = {};
-                    bpEnt["minecraft:entity"].events[k] = { add: { component_groups: [v] } };
-                }
-            });
-
-            // RP ENTITY
-            const rpEnt = {
-                format_version: "1.8.0",
-                "minecraft:client_entity": {
-                    description: {
-                        identifier: id,
-                        materials: { default: "phantom", invisible: "phantom_invisible" },
-                        textures: { default: "textures/sinyal/lensinyal" },
-                        geometry: { default: "geometry.szlenmuka" },
-                        animations: {},
-                        animation_controllers: [],
-                        render_controllers: ["controller.render.phantom"],
-                        spawn_egg: { base_color: "#EA9A51", overlay_color: "#FF0909" }
-                    }
-                }
-            };
-
-            document.querySelectorAll('#rp-anims div').forEach(row => {
-                const k = row.querySelector('.k').value;
-                const v = row.querySelector('.v').value;
-                if(k && v) {
-                    if(v.includes('controller')) {
-                        let obj = {}; obj[k] = v;
-                        rpEnt["minecraft:client_entity"].description.animation_controllers.push(obj);
-                    } else {
-                        rpEnt["minecraft:client_entity"].description.animations[k] = v;
-                    }
-                }
-            });
-
-            // MANIFESTS
-            const bpDeps = [{ module_name: "@minecraft/server", version: "1.13.0" }];
-            if (uiEnabled) bpDeps.push({ module_name: "@minecraft/server-ui", version: "1.2.0" });
-
-            storage.bp_man = JSON.stringify({
-                format_version: 2,
-                header: { name: "Project BP", uuid: uuids.bph, version: [1,0,0], min_engine_version: [1,21,30] },
-                modules: [
-                    { type: "data", uuid: uuids.bpm, version: [1,0,0] },
-                    { type: "script", language: "javascript", uuid: uuids.bps, version: [1,0,0], entry: "scripts/main.js" }
-                ],
-                dependencies: bpDeps
-            }, null, 2);
-
-            storage.rp_man = JSON.stringify({
-                format_version: 2,
-                header: { name: "Project RP", uuid: uuids.rph, version: [1,0,0], min_engine_version: [1,21,30] },
-                modules: [{ type: "resources", uuid: uuids.rpm, version: [1,0,0] }]
-            }, null, 2);
-
-            // MAIN.JS
-            let jsStr = `import { world, system } from "@minecraft/server";`;
-            if (uiEnabled) jsStr += `\nimport { ActionFormData, ModalFormData } from "@minecraft/server-ui";`;
-            jsStr += `\n\n// main.js script API`;
-            storage.js = jsStr;
-
-            storage.bp_ent = JSON.stringify(bpEnt, null, 2);
-            storage.rp_ent = JSON.stringify(rpEnt, null, 2);
-            tab(currentTab);
-        }
-
-        function tab(t) {
-            currentTab = t;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-            document.getElementById('t-' + t).classList.add('tab-active');
-            document.getElementById('output').textContent = storage[t];
-        }
-
-        function copyCode() {
-            navigator.clipboard.writeText(storage[currentTab]);
-            alert("Disalin!");
-        }
-
-        window.onload = () => {
-            addRow('bp-events', 'vlt:spawn', 'vlt:init');
-            addRow('rp-anims', 'hijau', 'animation.szlen.hijau');
-            addRow('rp-anims', 'reset', 'controller.animation.szlen');
-            generateFiles(true);
+            ]
         };
-    </script>
+
+        // Jika mode BP dan ada link RP, masukkan ke dependency
+        if (mode === 'bp' && rpLink.trim() !== "") {
+            manifest.dependencies = [{ uuid: rpLink.trim(), version: [1, 0, 0] }];
+        }
+
+        document.getElementById('codeArea').textContent = JSON.stringify(manifest, null, 4);
+    }
+
+    function copyJSON() {
+        const code = document.getElementById('codeArea').textContent;
+        navigator.clipboard.writeText(code);
+        alert("Berhasil disalin ke clipboard!");
+    }
+
+    function downloadJSON() {
+        const code = document.getElementById('codeArea').textContent;
+        const blob = new Blob([code], {type: "application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "manifest.json";
+        a.click();
+    }
+
+    // Jalankan pertama kali
+    updateJSON();
+</script>
+
 </body>
 </html>
