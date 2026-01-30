@@ -3,107 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCBE Ultimate Studio v3</title>
+    <title>MCBE Studio v5.1 - Final Verified</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #e4e4e7; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; }
-        input, select, textarea { 
-            background: #27272a !important; border: 1px solid #3f3f46 !important; 
-            color: #fff !important; font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; width: 100%;
-        }
-        .tab-btn { padding: 10px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: 0.2s; border-bottom: 2px solid transparent; opacity: 0.6; }
+        input { background: #27272a !important; border: 1px solid #3f3f46 !important; color: #fff !important; font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; width: 100%; }
+        .tab-btn { padding: 10px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: 0.2s; border-bottom: 2px solid transparent; opacity: 0.6; cursor: pointer; }
         .tab-active { border-color: #3b82f6; color: #3b82f6; opacity: 1; background: rgba(59, 130, 246, 0.05); }
         .btn-gen { background: linear-gradient(135deg, #2563eb, #1d4ed8); transition: 0.3s; cursor: pointer; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
         <header class="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-extrabold text-white">MCBE Entity Studio <span class="text-blue-500 text-sm">PRO</span></h1>
-                <p class="text-zinc-500 text-sm">Advanced Resource & Behavior Generator.</p>
+                <h1 class="text-2xl font-extrabold text-white">MCBE Studio <span class="text-blue-500">v5.1</span></h1>
+                <p class="text-zinc-500 text-sm">Verified for 1.21.130+</p>
             </div>
-            <button onclick="generateFiles(true)" class="btn-gen text-white px-8 py-3 rounded-lg font-bold uppercase text-xs shadow-lg">Refresh UUID & Code</button>
+            <button onclick="generateFiles(true)" class="btn-gen text-white px-8 py-3 rounded-lg font-bold uppercase text-xs shadow-lg">Final Sync UUID</button>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-5 space-y-5 max-h-[80vh] overflow-y-auto pr-2 no-scrollbar">
-                
-                <div class="card p-5">
-                    <h2 class="text-blue-400 font-bold mb-3 text-[10px] uppercase tracking-widest">Core Configuration</h2>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="col-span-2">
-                            <label class="block text-[10px] text-zinc-500 mb-1 uppercase">Identifier</label>
-                            <input type="text" id="ent_id" value="vlt:neon_guard" oninput="generateFiles()">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-zinc-500 mb-1 uppercase">Spawn Egg Base</label>
-                            <input type="color" id="egg_base" value="#2D3436" oninput="generateFiles()">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-zinc-500 mb-1 uppercase">Spawn Egg Overlay</label>
-                            <input type="color" id="egg_over" value="#00CEC9" oninput="generateFiles()">
-                        </div>
-                    </div>
+            <div class="lg:col-span-4 space-y-5 max-h-[85vh] overflow-y-auto pr-2 no-scrollbar">
+                <div class="card p-4 border border-emerald-500/30 bg-emerald-500/5">
+                    <h2 class="text-emerald-400 font-bold mb-2 text-[10px] uppercase tracking-tighter">Direktori File (Cek Kembali!)</h2>
+                    <pre class="text-[9px] text-zinc-400 leading-tight">
+📂 BP_Folder/
+ ├── manifest.json
+ ├── entities/ ➜ mob.json
+ └── scripts/  ➜ main.js
+📂 RP_Folder/
+ ├── manifest.json
+ ├── entity/   ➜ mob.json
+ └── textures/ ➜ sinyal/lensinyal.png
+                    </pre>
                 </div>
 
-                <div class="card p-5 border-l-4 border-purple-500">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-purple-400 font-bold text-[10px] uppercase tracking-widest">Resource Pack (RP)</h2>
-                    </div>
-                    <div class="space-y-3">
+                <div class="card p-5">
+                    <h2 class="text-blue-400 font-bold mb-3 text-[10px] uppercase">Core Settings</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[9px] text-zinc-500 mb-1 uppercase">Identifier</label>
+                            <input type="text" id="ent_id" value="sz:lenmj" oninput="generateFiles()">
+                        </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-zinc-500 mb-1">GEOMETRY</label>
-                                <input type="text" id="rp_geo" value="geometry.vlt_neon" oninput="generateFiles()">
+                                <label class="block text-[9px] text-zinc-500 mb-1 uppercase">Egg Base</label>
+                                <input type="color" id="egg_base" value="#EA9A51" class="h-10 cursor-pointer" oninput="generateFiles()">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-zinc-500 mb-1">TEXTURE</label>
-                                <input type="text" id="rp_tex" value="textures/vlt/neon_guard" oninput="generateFiles()">
+                                <label class="block text-[9px] text-zinc-500 mb-1 uppercase">Egg Over</label>
+                                <input type="color" id="egg_over" value="#FF0909" class="h-10 cursor-pointer" oninput="generateFiles()">
                             </div>
-                        </div>
-                        
-                        <div class="pt-2 border-t border-zinc-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[9px] text-zinc-500 font-bold">MATERIALS</span>
-                                <button onclick="addRow('rp-mat-list', 'mat')" class="text-[8px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300">+ ADD</button>
-                            </div>
-                            <div id="rp-mat-list" class="space-y-1"></div>
-                        </div>
-
-                        <div class="pt-2 border-t border-zinc-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[9px] text-zinc-500 font-bold">ANIMATIONS</span>
-                                <button onclick="addRow('rp-anim-list', 'anim')" class="text-[8px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300">+ ADD</button>
-                            </div>
-                            <div id="rp-anim-list" class="space-y-1"></div>
-                        </div>
-
-                        <div class="pt-2 border-t border-zinc-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[9px] text-zinc-500 font-bold">ANIMATION CONTROLLERS</span>
-                                <button onclick="addRow('rp-ctrl-list', 'ctrl')" class="text-[8px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300">+ ADD</button>
-                            </div>
-                            <div id="rp-ctrl-list" class="space-y-1"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-7 flex flex-col h-[80vh]">
+            <div class="lg:col-span-8 flex flex-col h-[85vh]">
                 <div class="flex bg-zinc-900 p-1 rounded-t-xl border border-zinc-800 overflow-x-auto no-scrollbar">
                     <button onclick="tab('rp_ent')" id="t-rp_ent" class="tab-btn">RP Entity</button>
                     <button onclick="tab('bp_ent')" id="t-bp_ent" class="tab-btn">BP Entity</button>
-                    <button onclick="tab('rp_man')" id="t-rp_man" class="tab-btn">RP Manifest</button>
-                    <button onclick="tab('bp_man')" id="t-bp_man" class="tab-btn">BP Manifest</button>
+                    <button onclick="tab('bp_man')" id="t-bp_man" class="tab-btn">BP Man</button>
+                    <button onclick="tab('rp_man')" id="t-rp_man" class="tab-btn">RP Man</button>
+                    <button onclick="tab('js')" id="t-js" class="tab-btn">main.js</button>
                 </div>
                 <div class="relative flex-1 min-h-0">
-                    <button onclick="copyCode()" class="absolute top-4 right-4 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold px-4 py-2 rounded shadow-lg z-10">COPY CODE</button>
-                    <pre id="output" class="w-full h-full bg-zinc-950 p-6 rounded-b-xl border-x border-b border-zinc-800 text-[12px] mono text-blue-300 overflow-auto"></pre>
+                    <button onclick="copyCode()" class="absolute top-4 right-4 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold px-4 py-2 rounded shadow-lg z-10">COPY</button>
+                    <pre id="output" class="w-full h-full bg-zinc-950 p-6 rounded-b-xl border-x border-b border-zinc-800 text-[11px] mono text-blue-300 overflow-auto"></pre>
                 </div>
             </div>
         </div>
@@ -114,84 +84,66 @@
         let storage = {};
         let uuids = {};
 
-        function addRow(containerId, type, defKey = "", defVal = "") {
-            const container = document.getElementById(containerId);
-            const div = document.createElement('div');
-            div.className = 'flex gap-2 items-center';
-            div.innerHTML = `
-                <input type="text" placeholder="Key" class="k flex-1 text-[10px]" value="${defKey}">
-                <input type="text" placeholder="Value" class="v flex-[1.5] text-[10px]" value="${defVal}">
-                <button onclick="this.parentElement.remove();generateFiles()" class="text-zinc-600 hover:text-red-500 px-1">×</button>
-            `;
-            container.appendChild(div);
-            div.querySelectorAll('input').forEach(i => i.addEventListener('input', () => generateFiles()));
-        }
-
         function generateFiles(resetUUID = false) {
             if (resetUUID || !uuids.bph) {
-                uuids = { bph: crypto.randomUUID(), bpm: crypto.randomUUID(), rph: crypto.randomUUID(), rpm: crypto.randomUUID() };
+                uuids = { bph: crypto.randomUUID(), bpm: crypto.randomUUID(), bps: crypto.randomUUID(), rph: crypto.randomUUID(), rpm: crypto.randomUUID() };
             }
 
             const id = document.getElementById('ent_id').value;
-            const eggBase = document.getElementById('egg_base').value.toUpperCase();
-            const eggOver = document.getElementById('egg_over').value.toUpperCase();
+            const eb = document.getElementById('egg_base').value.toUpperCase();
+            const eo = document.getElementById('egg_over').value.toUpperCase();
 
-            // --- RESOURCE PACK ENTITY (Following your template) ---
-            const rpEnt = {
+            // RP ENTITY
+            storage.rp_ent = JSON.stringify({
                 format_version: "1.8.0",
                 "minecraft:client_entity": {
                     description: {
                         identifier: id,
-                        materials: { default: "phantom" },
-                        textures: { default: document.getElementById('rp_tex').value },
-                        geometry: { default: document.getElementById('rp_geo').value },
-                        animations: {},
-                        animation_controllers: [],
+                        materials: { default: "phantom", invisible: "phantom_invisible" },
+                        textures: { default: "textures/sinyal/lensinyal" },
+                        geometry: { default: "geometry.szlenmuka" },
+                        animations: { hijau: "animation.szlen.hijau", reset: "animation.szlen.reset" },
+                        animation_controllers: [{ reset: "controller.animation.szlen" }],
                         render_controllers: ["controller.render.phantom"],
-                        spawn_egg: { base_color: eggBase, overlay_color: eggOver }
+                        spawn_egg: { base_color: eb, overlay_color: eo }
                     }
                 }
-            };
+            }, null, 2);
 
-            // Collect Materials
-            document.querySelectorAll('#rp-mat-list div').forEach(row => {
-                const k = row.querySelector('.k').value;
-                const v = row.querySelector('.v').value;
-                if(k) rpEnt["minecraft:client_entity"].description.materials[k] = v;
-            });
-
-            // Collect Animations
-            document.querySelectorAll('#rp-anim-list div').forEach(row => {
-                const k = row.querySelector('.k').value;
-                const v = row.querySelector('.v').value;
-                if(k) rpEnt["minecraft:client_entity"].description.animations[k] = v;
-            });
-
-            // Collect Animation Controllers
-            document.querySelectorAll('#rp-ctrl-list div').forEach(row => {
-                const k = row.querySelector('.k').value;
-                const v = row.querySelector('.v').value;
-                if(k) {
-                    let obj = {}; obj[k] = v;
-                    rpEnt["minecraft:client_entity"].description.animation_controllers.push(obj);
-                }
-            });
-
-            // BP ENTITY SIMPLE
-            const bpEnt = {
+            // BP ENTITY
+            storage.bp_ent = JSON.stringify({
                 format_version: "1.21.30",
                 "minecraft:entity": {
                     description: { identifier: id, is_spawnable: true, is_summonable: true },
-                    components: { "minecraft:health": { value: 20, max: 20 }, "minecraft:physics": {} }
+                    components: {
+                        "minecraft:health": { value: 20, max: 20 },
+                        "minecraft:type_family": { family: ["custom", "monster"] },
+                        "minecraft:physics": {}
+                    }
                 }
-            };
+            }, null, 2);
 
-            storage = {
-                rp_ent: JSON.stringify(rpEnt, null, 2),
-                bp_ent: JSON.stringify(bpEnt, null, 2),
-                rp_man: JSON.stringify({ format_version: 2, header: { name: "Neon RP", uuid: uuids.rph, version: [1,0,0], min_engine_version: [1,21,0] }, modules: [{ type: "resources", uuid: uuids.rpm, version: [1,0,0] }] }, null, 2),
-                bp_man: JSON.stringify({ format_version: 2, header: { name: "Neon BP", uuid: uuids.bph, version: [1,0,0], min_engine_version: [1,21,0] }, modules: [{ type: "data", uuid: uuids.bpm, version: [1,0,0] }] }, null, 2)
-            };
+            // BP MANIFEST
+            storage.bp_man = JSON.stringify({
+                format_version: 2,
+                header: { name: "Project BP", uuid: uuids.bph, version: [1,0,0], min_engine_version: [1,21,30] },
+                modules: [
+                    { type: "data", uuid: uuids.bpm, version: [1,0,0] },
+                    { type: "script", language: "javascript", uuid: uuids.bps, version: [1,0,0], entry: "scripts/main.js" }
+                ],
+                dependencies: [{ module_name: "@minecraft/server", version: "1.15.0" }]
+            }, null, 2);
+
+            // RP MANIFEST
+            storage.rp_man = JSON.stringify({
+                format_version: 2,
+                header: { name: "Project RP", uuid: uuids.rph, version: [1,0,0], min_engine_version: [1,21,30] },
+                modules: [{ type: "resources", uuid: uuids.rpm, version: [1,0,0] }]
+            }, null, 2);
+
+            // MAIN JS
+            storage.js = `import { world, system } from "@minecraft/server";\n\n// Initialize script for ${id}\nconsole.warn("Script Active: ${id}");\n\nworld.afterEvents.entitySpawn.subscribe((data) => {\n    if (data.entity.typeId === "${id}") {\n        world.sendMessage("Entity ${id} telah muncul!");\n    }\n});`;
+
             tab(currentTab);
         }
 
@@ -204,17 +156,10 @@
 
         function copyCode() {
             navigator.clipboard.writeText(storage[currentTab]);
-            alert("Tersalin!");
+            alert("Disalin!");
         }
 
-        // Set Defaults
-        window.onload = () => {
-            addRow('rp-mat-list', 'mat', 'invisible', 'phantom_invisible');
-            addRow('rp-anim-list', 'anim', 'glow', 'animation.neon.glow');
-            addRow('rp-anim-list', 'anim', 'idle', 'animation.neon.idle');
-            addRow('rp-ctrl-list', 'ctrl', 'main', 'controller.animation.neon_main');
-            generateFiles(true);
-        };
+        window.onload = () => generateFiles(true);
     </script>
 </body>
 </html>
