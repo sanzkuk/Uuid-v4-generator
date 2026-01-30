@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCBE Ultimate Creator 1.21.130+</title>
+    <title>MCBE Ultimate Studio v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
@@ -11,114 +11,97 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; }
         input, select, textarea { 
-            background: #27272a !important; 
-            border: 1px solid #3f3f46 !important; 
-            color: #fff !important; 
-            font-size: 0.875rem;
-            padding: 8px 12px;
-            border-radius: 8px;
-            width: 100%;
+            background: #27272a !important; border: 1px solid #3f3f46 !important; 
+            color: #fff !important; font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; width: 100%;
         }
-        input:focus, textarea:focus { border-color: #3b82f6 !important; outline: none; }
-        .tab-btn { padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s; border-bottom: 2px solid transparent; }
-        .tab-active { border-color: #3b82f6; color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
-        .btn-gen { background: linear-gradient(135deg, #2563eb, #1d4ed8); transition: 0.3s; }
-        .btn-gen:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4); }
+        .tab-btn { padding: 10px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: 0.2s; border-bottom: 2px solid transparent; opacity: 0.6; }
+        .tab-active { border-color: #3b82f6; color: #3b82f6; opacity: 1; background: rgba(59, 130, 246, 0.05); }
+        .btn-gen { background: linear-gradient(135deg, #2563eb, #1d4ed8); transition: 0.3s; cursor: pointer; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
-        <header class="mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <header class="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-extrabold text-white">MCBE Entity Studio <span class="text-blue-500 text-sm">v1.21.130+</span></h1>
-                <p class="text-zinc-400 mt-1">Buat entitas kustom dengan komponen behavior yang fleksibel.</p>
+                <h1 class="text-2xl font-extrabold text-white">MCBE Entity Studio <span class="text-blue-500">v1.21.130+</span></h1>
+                <p class="text-zinc-500 text-sm">Full Customization: Behavior & Resource Packs.</p>
             </div>
-            <button onclick="generateFiles(true)" class="btn-gen text-white px-10 py-4 rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl">
-                Generate & Update UUID
-            </button>
+            <button onclick="generateFiles(true)" class="btn-gen text-white px-8 py-3 rounded-lg font-bold uppercase text-xs shadow-lg">Generate Everything & New UUID</button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5 space-y-6 max-h-[85vh] overflow-y-auto pr-2 no-scrollbar">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-5 max-h-[80vh] overflow-y-auto pr-2 no-scrollbar">
                 
-                <div class="card p-6">
-                    <h2 class="text-blue-400 font-bold mb-4 flex items-center gap-2 text-xs uppercase tracking-tighter">Manifest & Core Settings</h2>
-                    <div class="grid grid-cols-2 gap-4">
+                <div class="card p-5">
+                    <h2 class="text-blue-400 font-bold mb-3 text-[10px] uppercase tracking-widest">Core Configuration</h2>
+                    <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-zinc-500 mb-1 uppercase">Identifier (Namespace:Name)</label>
-                            <input type="text" id="ent_id" value="custom:my_phantom" oninput="generateFiles(false)">
+                            <label class="block text-[10px] text-zinc-500 mb-1">IDENTIFIER (NAMESPACE:NAME)</label>
+                            <input type="text" id="ent_id" value="custom:my_mob" oninput="generateFiles()">
                         </div>
-                        <div class="col-span-2 flex items-center gap-3 p-3 bg-blue-500/5 border border-blue-500/20 rounded-xl">
-                            <input type="checkbox" id="script_api_toggle" class="w-5 h-5 accent-blue-600 cursor-pointer" onchange="generateFiles(false)">
-                            <div>
-                                <label for="script_api_toggle" class="text-sm font-bold text-blue-100 cursor-pointer">Aktifkan Script API</label>
-                                <p class="text-[10px] text-blue-400/60">Menambah modul @minecraft/server & file main.js</p>
-                            </div>
+                        <div>
+                            <label class="block text-[10px] text-zinc-500 mb-1">PACK NAME</label>
+                            <input type="text" id="pack_name" value="My Mob Pack" oninput="generateFiles()">
                         </div>
-                    </div>
-                </div>
-
-                <div class="card p-6">
-                    <h2 class="text-emerald-400 font-bold mb-4 flex items-center gap-2 text-xs uppercase tracking-tighter">Behavior Components (BP)</h2>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-zinc-500 mb-1 uppercase">Family Type</label>
-                                <input type="text" id="comp_family" value="phantom, monster" oninput="generateFiles(false)">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-zinc-500 mb-1 uppercase">Health</label>
-                                <input type="number" id="comp_health" value="20" oninput="generateFiles(false)">
-                            </div>
-                        </div>
-
-                        <div class="pt-2 border-t border-zinc-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[10px] font-bold text-zinc-500 uppercase">Custom Components</span>
-                                <button onclick="addRow('custom-comp-list', true)" class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded hover:bg-emerald-500/20">+ ADD COMPONENT</button>
-                            </div>
-                            <div id="custom-comp-list" class="space-y-2"></div>
-                        </div>
-
-                        <div class="pt-2 border-t border-zinc-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[10px] font-bold text-zinc-500 uppercase">Component Groups</span>
-                                <button onclick="addRow('group-list')" class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded hover:bg-emerald-500/20">+ ADD GROUP</button>
-                            </div>
-                            <div id="group-list" class="space-y-2"></div>
+                        <div class="flex items-center gap-2 pt-4">
+                            <input type="checkbox" id="script_api_toggle" class="w-4 h-4 accent-blue-600" onchange="generateFiles()">
+                            <label for="script_api_toggle" class="text-xs font-bold text-blue-200">Script API</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="card p-6">
-                    <h2 class="text-purple-400 font-bold mb-4 flex items-center gap-2 text-xs uppercase tracking-tighter">Visuals & Resources (RP)</h2>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
+                <div class="card p-5 border-l-4 border-emerald-500">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-emerald-400 font-bold text-[10px] uppercase tracking-widest">Behavior (BP)</h2>
+                        <button onclick="addRow('bp-comp-list', 'comp')" class="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">+ ADD COMPONENT</button>
+                    </div>
+                    <div id="bp-comp-list" class="space-y-2">
+                        <div class="flex gap-2">
+                            <input type="text" value="minecraft:health" class="flex-1" readonly>
+                            <input type="text" id="bp_health" value='{"value": 20, "max": 20}' class="flex-[1.5]" oninput="generateFiles()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-5 border-l-4 border-purple-500">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-purple-400 font-bold text-[10px] uppercase tracking-widest">Visuals (RP)</h2>
+                        <button onclick="addRow('rp-anim-list', 'anim')" class="text-[9px] bg-purple-500/10 text-purple-400 px-2 py-1 rounded">+ ADD ANIMATION</button>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] font-bold text-zinc-500 mb-1 uppercase">Geometry ID</label>
-                                <input type="text" id="rp_geo" value="geometry.phantom" oninput="generateFiles(false)">
+                                <label class="block text-[10px] text-zinc-500 mb-1">GEOMETRY ID</label>
+                                <input type="text" id="rp_geo" value="geometry.humanoid" oninput="generateFiles()">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-zinc-500 mb-1 uppercase">Texture Path</label>
-                                <input type="text" id="rp_tex" value="textures/entity/phantom/phantom" oninput="generateFiles(false)">
+                                <label class="block text-[10px] text-zinc-500 mb-1">TEXTURE PATH</label>
+                                <input type="text" id="rp_tex" value="textures/entity/steve" oninput="generateFiles()">
                             </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-zinc-500 mb-1">RENDER CONTROLLER</label>
+                            <input type="text" id="rp_render" value="controller.render.default" oninput="generateFiles()">
+                        </div>
+                        <div id="rp-anim-list" class="space-y-2 pt-2 border-t border-zinc-800">
+                            <p class="text-[9px] text-zinc-600 font-bold">ANIMATIONS & CONTROLLERS</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-7 flex flex-col min-h-[600px]">
+            <div class="lg:col-span-7 flex flex-col h-[80vh]">
                 <div class="flex bg-zinc-900 p-1 rounded-t-xl border border-zinc-800 overflow-x-auto no-scrollbar">
-                    <button onclick="tab('bp_ent')" id="t-bp_ent" class="tab-btn">BP Entity</button>
-                    <button onclick="tab('rp_ent')" id="t-rp_ent" class="tab-btn">RP Entity</button>
-                    <button onclick="tab('bp_man')" id="t-bp_man" class="tab-btn">BP Manifest</button>
-                    <button onclick="tab('js')" id="t-js" class="tab-btn hidden">main.js</button>
+                    <button onclick="tab('bp_ent')" id="t-bp_ent" class="tab-btn">BP Ent</button>
+                    <button onclick="tab('rp_ent')" id="t-rp_ent" class="tab-btn">RP Ent</button>
+                    <button onclick="tab('bp_man')" id="t-bp_man" class="tab-btn">BP Man</button>
+                    <button onclick="tab('rp_man')" id="t-rp_man" class="tab-btn">RP Man</button>
+                    <button onclick="tab('js')" id="t-js" class="tab-btn hidden">Main.js</button>
                 </div>
-                
-                <div class="relative flex-1">
-                    <button onclick="copyCode()" class="absolute top-4 right-4 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold px-4 py-2 rounded-lg z-10">SALIN KODE</button>
-                    <pre id="output" class="w-full h-full bg-zinc-950 p-6 rounded-b-xl border-x border-b border-zinc-800 text-sm mono text-blue-300 overflow-auto"></pre>
+                <div class="relative flex-1 min-h-0">
+                    <button onclick="copyCode()" class="absolute top-4 right-4 bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] font-bold px-3 py-1.5 rounded border border-zinc-600 z-10">COPY</button>
+                    <pre id="output" class="w-full h-full bg-zinc-950 p-6 rounded-b-xl border-x border-b border-zinc-800 text-[13px] mono text-blue-300 overflow-auto"></pre>
                 </div>
             </div>
         </div>
@@ -127,125 +110,117 @@
     <script>
         let currentTab = 'bp_ent';
         let storage = {};
-        let uuids = { bph: '', bpm: '', bps: '', rph: '', rpm: '' };
+        let uuids = {};
 
-        function getUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-                const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
+        function getUUID() { return crypto.randomUUID(); }
 
-        function addRow(containerId, isComponent = false) {
+        function addRow(containerId, type) {
             const container = document.getElementById(containerId);
             const div = document.createElement('div');
-            div.className = 'flex gap-2 items-start';
-            
-            if(isComponent) {
-                div.innerHTML = `
-                    <input type="text" placeholder="minecraft:movement" class="comp-key flex-1 text-[10px]">
-                    <textarea placeholder='{"value": 0.3}' class="comp-val flex-[1.5] text-[10px] h-9 min-h-[36px] mono"></textarea>
-                    <button onclick="this.parentElement.remove(); generateFiles(false)" class="text-zinc-600 hover:text-red-500 font-bold px-1 mt-2">×</button>
-                `;
+            div.className = 'flex gap-2 items-center';
+            if(type === 'comp') {
+                div.innerHTML = `<input type="text" placeholder="component:id" class="c-key flex-1"><input type="text" placeholder='{"val":1}' class="c-val flex-[1.5]"><button onclick="this.parentElement.remove();generateFiles()" class="text-red-500 px-1">×</button>`;
             } else {
-                div.innerHTML = `
-                    <input type="text" placeholder="Group Name" class="flex-1 text-[10px]">
-                    <input type="text" placeholder="Component ID" class="flex-1 text-[10px]">
-                    <button onclick="this.parentElement.remove(); generateFiles(false)" class="text-zinc-600 hover:text-red-500 font-bold px-1">×</button>
-                `;
+                div.innerHTML = `<input type="text" placeholder="move" class="a-key flex-1"><input type="text" placeholder="animation.mob.walk" class="a-val flex-[1.5]"><button onclick="this.parentElement.remove();generateFiles()" class="text-red-500 px-1">×</button>`;
             }
             container.appendChild(div);
-            div.querySelectorAll('input, textarea').forEach(i => i.addEventListener('input', () => generateFiles(false)));
+            div.querySelectorAll('input').forEach(i => i.addEventListener('input', () => generateFiles()));
         }
 
-        function generateFiles(newUUID = false) {
-            if (newUUID || !uuids.bph) {
+        function generateFiles(resetUUID = false) {
+            if (resetUUID || !uuids.bph) {
                 uuids = { bph: getUUID(), bpm: getUUID(), bps: getUUID(), rph: getUUID(), rpm: getUUID() };
             }
 
             const id = document.getElementById('ent_id').value;
+            const name = document.getElementById('pack_name').value;
             const scriptOn = document.getElementById('script_api_toggle').checked;
 
-            // BP ENTITY
-            const families = document.getElementById('comp_family').value.split(',').map(s => s.trim());
+            // --- BEHAVIOR PACK ENTITY ---
             const bpEnt = {
                 format_version: "1.21.30",
                 "minecraft:entity": {
                     description: { identifier: id, is_spawnable: true, is_summonable: true },
-                    component_groups: {},
-                    components: {
-                        "minecraft:type_family": { family: families },
-                        "minecraft:health": { value: parseInt(document.getElementById('comp_health').value) || 20, max: parseInt(document.getElementById('comp_health').value) || 20 }
-                    },
-                    events: {}
+                    components: {}
                 }
             };
-
-            // Process Custom Components
-            document.querySelectorAll('#custom-comp-list > div').forEach(row => {
-                const key = row.querySelector('.comp-key').value;
-                const val = row.querySelector('.comp-val').value;
-                if (key) {
-                    try {
-                        bpEnt["minecraft:entity"].components[key] = JSON.parse(val);
-                    } catch (e) {
-                        bpEnt["minecraft:entity"].components[key] = isNaN(val) ? val : parseFloat(val);
-                    }
+            
+            // Default health from input
+            try { bpEnt["minecraft:entity"].components["minecraft:health"] = JSON.parse(document.getElementById('bp_health').value); } catch(e){}
+            
+            // Custom BP Components
+            document.querySelectorAll('#bp-comp-list div').forEach(row => {
+                const key = row.querySelector('.c-key')?.value;
+                const val = row.querySelector('.c-val')?.value;
+                if(key && val) {
+                    try { bpEnt["minecraft:entity"].components[key] = JSON.parse(val); } catch(e) { bpEnt["minecraft:entity"].components[key] = val; }
                 }
             });
 
-            // Process Groups
-            document.querySelectorAll('#group-list div').forEach(row => {
-                const ins = row.querySelectorAll('input');
-                if (ins[0] && ins[0].value) bpEnt["minecraft:entity"].component_groups[ins[0].value] = { [ins[1].value]: {} };
-            });
-
-            // RP ENTITY
+            // --- RESOURCE PACK ENTITY ---
             const rpEnt = {
                 format_version: "1.10.0",
                 "minecraft:client_entity": {
                     description: {
                         identifier: id,
-                        materials: { default: "phantom" },
+                        materials: { default: "entity_alphatest" },
                         textures: { default: document.getElementById('rp_tex').value },
                         geometry: { default: document.getElementById('rp_geo').value },
-                        render_controllers: ["controller.render.default"]
+                        animations: {},
+                        scripts: { animate: [] },
+                        render_controllers: [document.getElementById('rp_render').value]
                     }
                 }
             };
 
-            // BP MANIFEST
+            // Custom RP Animations
+            document.querySelectorAll('#rp-anim-list div').forEach(row => {
+                const key = row.querySelector('.a-key')?.value;
+                const val = row.querySelector('.a-val')?.value;
+                if(key && val) {
+                    rpEnt["minecraft:client_entity"].description.animations[key] = val;
+                    rpEnt["minecraft:client_entity"].description.scripts.animate.push(key);
+                }
+            });
+
+            // --- MANIFESTS ---
             const bpMan = {
                 format_version: 2,
-                header: { name: "Pack BP", uuid: uuids.bph, version: [1,0,0], min_engine_version: [1,21,130] },
+                header: { name: `${name} BP`, uuid: uuids.bph, version: [1,0,0], min_engine_version: [1,21,130] },
                 modules: [{ type: "data", uuid: uuids.bpm, version: [1,0,0] }]
             };
-            if(scriptOn) {
-                bpMan.modules.push({ type: "script", language: "javascript", uuid: uuids.bps, version: [1,0,0], entry: "scripts/main.js" });
-                document.getElementById('t-js').classList.remove('hidden');
-            } else {
-                document.getElementById('t-js').classList.add('hidden');
-            }
+            if(scriptOn) bpMan.modules.push({ type: "script", language: "javascript", uuid: uuids.bps, version: [1,0,0], entry: "scripts/main.js" });
+
+            const rpMan = {
+                format_version: 2,
+                header: { name: `${name} RP`, uuid: uuids.rph, version: [1,0,0], min_engine_version: [1,21,130] },
+                modules: [{ type: "resources", uuid: uuids.rpm, version: [1,0,0] }]
+            };
 
             storage = {
                 bp_ent: JSON.stringify(bpEnt, null, 4),
                 rp_ent: JSON.stringify(rpEnt, null, 4),
                 bp_man: JSON.stringify(bpMan, null, 4),
-                js: `import { world } from "@minecraft/server";\nconsole.warn("Entity ${id} Loaded!");`
+                rp_man: JSON.stringify(rpMan, null, 4),
+                js: `import { world } from "@minecraft/server";\n\n// Entity ${id} Setup`
             };
+            
+            document.getElementById('t-js').classList.toggle('hidden', !scriptOn);
             tab(currentTab);
         }
 
         function tab(t) {
             currentTab = t;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-            if(document.getElementById('t-' + t)) document.getElementById('t-' + t).classList.add('tab-active');
-            document.getElementById('output').textContent = storage[t] || "";
+            document.getElementById('t-' + t).classList.add('tab-active');
+            document.getElementById('output').textContent = storage[t];
         }
 
         function copyCode() {
             navigator.clipboard.writeText(storage[currentTab]);
-            alert("Kode disalin!");
+            const btn = event.target;
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = "COPY", 1000);
         }
 
         window.onload = () => generateFiles(true);
