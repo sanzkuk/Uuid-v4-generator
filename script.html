@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Manifest Studio - Multi Script Gen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0f0f13; --card: #1e1e26; --accent: #00ff87; --text: #fff; --danger: #ff4757; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: auto; }
+        
+        .ui-card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 30px; position: relative; }
+        .ui-card::before { content: "UI Project"; position: absolute; top: -10px; left: 20px; background: var(--accent); color: #000; padding: 2px 10px; font-size: 10px; font-weight: bold; border-radius: 5px; }
+
+        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
+        label { display: block; font-size: 11px; color: #aaa; text-transform: uppercase; margin-top: 10px; }
+        select, input { width: 100%; padding: 12px; background: #2d2d3a; border: 1px solid #444; color: #fff; border-radius: 8px; margin-top: 5px; }
+        
+        .elements-list { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-top: 15px; }
+        .el-item { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; }
+        .btn-add-ui { background: var(--accent); color: #000; width: 100%; font-size: 16px; margin-bottom: 40px; }
+        .btn-add-el { background: #444; color: #fff; margin-top: 10px; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-copy { background: #007acc; color: #fff; width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; }
+
+        pre { background: #000; padding: 20px; border-radius: 10px; color: var(--accent); border: 1px solid #333; overflow-x: auto; font-family: 'Consolas', monospace; }
+        .header-area { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-area">
+        <h1> Unlimited Script Gen</h1>
+        <p style="color: #888;">Buat banyak UI dan Trigger dalam satu file main.js</p>
+    </div>
+
+    <div id="masterContainer">
+        </div>
+
+    <button class="btn btn-add-ui" onclick="addNewUI()">+ TAMBAH UI & TRIGGER BARU</button>
+
+    <div class="ui-card">
+        <div class="section-title"> Preview main.js</div>
+        <pre id="codeOutput"></pre>
+        <button class="btn btn-copy" onclick="copyCode()"> SALIN SEMUA KODE</button>
+    </div>
+</div>
+
+<script>
+    // Database Utama
+    let uiProjects = [];
+
+    // Fungsi menambah Project UI Baru
+    function addNewUI() {
+        const id = Date.now();
+        uiProjects.push({
+            id: id,
+            trigger: "itemUse",
+            triggerValue: "minecraft:compass",
+            uiType: "ActionFormData",
+            title: "Menu Baru",
+            elements: []
+        });
+        render();
+    }
+
+    function removeUI(id) {
+        uiProjects = uiProjects.filter(p => p.id !== id);
+        render();
+    }
+
+    function addElement(projId) {
+        const proj = uiProjects.find(p => p.id === projId);
+        proj.elements.push({ label: "Tombol/Input", type: "button" });
+        render();
+    }
+
+    function removeElement(projId, elIndex) {
+        uiProjects.find(p => p.id === projId).elements.splice(elIndex, 1);
+        render();
+    }
+
+    function render() {
+        const container = document.getElementById('masterContainer');
+        container.innerHTML = "";
+
+        uiProjects.forEach((proj, index) => {
+            const card = document.createElement('div');
+            card.className = 'ui-card';
+            card.innerHTML = `
+                <div class="section-title">
+                    <span>#${index + 1} Config</span>
+                    <button class="btn btn-danger" onclick="removeUI(${proj.id})">Hapus UI</button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label>Pemicu (Event)</label>
+                        <select onchange="updateProj(${proj.id}, 'trigger', this.value)">
+                            <option value="itemUse" ${proj.trigger === 'itemUse' ? 'selected' : ''}>Pakai Item</option>
+                            <option value="chat" ${proj.trigger === 'chat' ? 'selected' : ''}>Ketik Chat</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>ID Item / Keyword Chat</label>
+                        <input type="text" value="${proj.triggerValue}" oninput="updateProj(${proj.id}, 'triggerValue', this.value)">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label>Jenis UI</label>
+                        <select onchange="updateProj(${proj.id}, 'uiType', this.value)">
+                            <option value="ActionFormData" ${proj.uiType === 'ActionFormData' ? 'selected' : ''}>Action (Tombol)</option>
+                            <option value="ModalFormData" ${proj.uiType === 'ModalFormData' ? 'selected' : ''}>Modal (Input)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Judul UI</label>
+                        <input type="text" value="${proj.title}" oninput="updateProj(${proj.id}, 'title', this.value)">
+                    </div>
+                </div>
+
+                <div class="elements-list" id="el-list-${proj.id}">
+                    <label>Elemen UI / Daftar Tombol:</label>
+                    ${proj.elements.map((el, i) => `
+                        <div class="el-item">
+                            <input type="text" value="${el.label}" oninput="updateEl(${proj.id}, ${i}, 'label', this.value)">
+                            ${proj.uiType === 'ModalFormData' ? `
+                                <select onchange="updateEl(${proj.id}, ${i}, 'type', this.value)">
+                                    <option value="textField">Text</option>
+                                    <option value="toggle">Toggle</option>
+                                    <option value="slider">Slider</option>
+                                </select>
+                            ` : ''}
+                            <button class="btn btn-danger" onclick="removeElement(${proj.id}, ${i})">X</button>
+                        </div>
+                    `).join('')}
+                    <button class="btn btn-add-el" onclick="addElement(${proj.id})">+ Tambah Elemen</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        generateCode();
+    }
+
+    function updateProj(id, key, val) {
+        const p = uiProjects.find(p => p.id === id);
+        p[key] = val;
+        render();
+    }
+
+    function updateEl(id, elIdx, key, val) {
+        uiProjects.find(p => p.id === id).elements[elIdx][key] = val;
+        generateCode();
+    }
+
+    function generateCode() {
+        let code = `import { world, system } from "@minecraft/server";\n`;
+        code += `import { ActionFormData, ModalFormData } from "@minecraft/server-ui";\n\n`;
+
+        uiProjects.forEach((proj, idx) => {
+            const funcName = `showUI_${idx}`;
+            
+            // Generate Event
+            if(proj.trigger === "itemUse") {
+                code += `world.beforeEvents.itemUse.subscribe((data) => {\n`;
+                code += `    if (data.itemStack.typeId === "${proj.triggerValue}") {\n`;
+                code += `        system.run(() => { ${funcName}(data.source); });\n`;
+                code += `    }\n});\n\n`;
+            } else {
+                code += `world.beforeEvents.chatSend.subscribe((data) => {\n`;
+                code += `    if (data.message === "${proj.triggerValue}") {\n`;
+                code += `        data.cancel = true;\n`;
+                code += `        system.run(() => { ${funcName}(data.sender); });\n`;
+                code += `    }\n});\n\n`;
+            }
+
+            // Generate Function
+            code += `function ${funcName}(player) {\n`;
+            code += `    const form = new ${proj.uiType}();\n`;
+            code += `    form.title("${proj.title}");\n`;
+
+            proj.elements.forEach(el => {
+                if(proj.uiType === "ActionFormData") {
+                    code += `    form.button("${el.label}");\n`;
+                } else {
+                    if(el.type === "textField") code += `    form.textField("${el.label}", "Isi di sini...");\n`;
+                    if(el.type === "toggle") code += `    form.toggle("${el.label}", false);\n`;
+                    if(el.type === "slider") code += `    form.slider("${el.label}", 0, 10, 1, 0);\n`;
+                }
+            });
+
+            code += `\n    form.show(player).then(res => {\n`;
+            code += `        if (res.canceled) return;\n`;
+            code += `        player.sendMessage("§aBerhasil menggunakan ${proj.title}!");\n`;
+            code += `    });\n}\n\n`;
+        });
+
+        document.getElementById('codeOutput').textContent = code;
+    }
+
+    function copyCode() {
+        navigator.clipboard.writeText(document.getElementById('codeOutput').textContent);
+        alert("Seluruh script berhasil disalin!");
+    }
+
+    // Inisialisasi satu UI pertama
+    addNewUI();
+</script>
+
+</body>
+</html>
