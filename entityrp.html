@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RP Entity Generator - MCBE Studio Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #e4e4e7; }
+        .glass-card { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(63, 63, 70, 0.5); }
+        .input-field { background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 10px; width: 100%; color: white; outline: none; transition: border-color 0.2s; }
+        .input-field:focus { border-color: #3b82f6; }
+        pre { background: #111113; padding: 15px; border-radius: 12px; border: 1px solid #27272a; overflow-x: auto; }
+        .copy-btn { background: #2563eb; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; transition: background 0.2s; }
+        .copy-btn:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-10">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-10">
+            <h1 class="text-3xl font-extrabold text-white">Entity <span class="text-blue-500">Resource Pack Pro</span> Generator</h1>
+            <p class="text-zinc-500">Hasilkan file Client Entity JSON secara otomatis.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Custom ID (Namespace:ID)</label>
+                    <input type="text" id="entityId" class="input-field" placeholder="my:custom_mob" oninput="generateCode()">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">ID Model (Geometry)</label>
+                        <input type="text" id="modelId" class="input-field" placeholder="geometry.custom_mob" oninput="generateCode()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Texture Name</label>
+                        <input type="text" id="textureName" class="input-field" placeholder="custom_mob" oninput="generateCode()">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Animation ID</label>
+                        <input type="text" id="animId" class="input-field" placeholder="walk" oninput="generateCode()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Anim Controller ID</label>
+                        <input type="text" id="ctrlId" class="input-field" placeholder="controller.animation.custom_mob" oninput="generateCode()">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Render Controller</label>
+                    <input type="text" id="renderId" class="input-field" placeholder="controller.render.default" oninput="generateCode()">
+                </div>
+
+                <div class="p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="useSpawnEgg" class="w-5 h-5 rounded" onchange="generateCode()" checked>
+                        <span class="text-sm font-medium">Aktifkan Spawn Egg (Tampak di Inventory)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-zinc-400">PREVIEW: <span class="text-white text-xs font-mono" id="fileNameDisplay">entity/custom_mob.entity.json</span></h3>
+                    <button onclick="copyToClipboard()" class="copy-btn">Copy Code</button>
+                </div>
+                <pre id="outputCode" class="text-sm leading-relaxed text-blue-300"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateCode() {
+            const id = document.getElementById('entityId').value || 'my:custom_mob';
+            const model = document.getElementById('modelId').value || 'geometry.custom_mob';
+            const texture = document.getElementById('textureName').value || 'custom_mob';
+            const anim = document.getElementById('animId').value || 'walk';
+            const ctrl = document.getElementById('ctrlId').value || 'controller.animation.custom_mob';
+            const render = document.getElementById('renderId').value || 'controller.render.default';
+            const spawnEgg = document.getElementById('useSpawnEgg').checked;
+
+            const shortName = id.split(':')[1] || 'custom_mob';
+            document.getElementById('fileNameDisplay').innerText = `entity/${shortName}.entity.json`;
+
+            const json = {
+                "format_version": "1.10.0",
+                "minecraft:client_entity": {
+                    "description": {
+                        "identifier": id,
+                        "materials": { "default": "entity_alphatest" },
+                        "textures": { "default": `textures/entity/${texture}` },
+                        "geometry": { "default": model },
+                        "animations": {
+                            "custom_anim": `animation.${shortName}.${anim}`,
+                            "base_controller": ctrl
+                        },
+                        "render_controllers": [ render ],
+                        "spawn_egg": spawnEgg ? { "texture": texture } : undefined
+                    }
+                }
+            };
+
+            // Menampilkan JSON dengan format rapi
+            document.getElementById('outputCode').textContent = JSON.stringify(json, null, 4);
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('outputCode').textContent;
+            navigator.clipboard.writeText(code);
+            alert("Kode berhasil disalin!");
+        }
+
+        // Jalankan sekali saat load
+        generateCode();
+    </script>
+</body>
+</html>

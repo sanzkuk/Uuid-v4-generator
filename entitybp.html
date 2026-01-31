@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master BP Generator v4.0 - MCBE Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #e4e4e7; }
+        .glass-card { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(63, 63, 70, 0.5); }
+        .input-field { background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 10px; width: 100%; color: white; outline: none; font-size: 13px; transition: all 0.2s; }
+        .input-field:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        pre { background: #111113; padding: 20px; border-radius: 12px; border: 1px solid #27272a; color: #93c5fd; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; min-height: 85vh; }
+        .section-title { font-size: 0.7rem; font-weight: 800; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .btn-add { background: #1e293b; color: #94a3b8; padding: 4px 12px; border-radius: 6px; font-size: 11px; border: 1px dashed #334155; cursor: pointer; transition: 0.2s; }
+        .btn-add:hover { border-color: #3b82f6; color: white; background: #1e293b; }
+        .btn-remove { color: #ef4444; font-size: 14px; padding: 0 8px; transition: 0.2s; }
+        .btn-remove:hover { transform: scale(1.2); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-[1600px] mx-auto">
+        <header class="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-white tracking-tight">BP Master <span class="text-blue-500">Generator</span></h1>
+                <p class="text-zinc-500 text-sm">Full Components: Physics, Groups, Events & Interactions</p>
+            </div>
+            <button onclick="copyToClipboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+                Salin Kode JSON
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 space-y-6 max-h-[85vh] overflow-y-auto pr-3">
+                
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="section-title">Identitas & Fisik Utama</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="text-[10px] text-zinc-500 font-bold uppercase">Entity Identifier</label>
+                            <input type="text" id="entityId" class="input-field" placeholder="ex: my:custom_npc" oninput="generateBP()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-500 font-bold uppercase">Family</label>
+                            <input type="text" id="family" class="input-field" value="mob" oninput="generateBP()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-500 font-bold uppercase">Health (HP)</label>
+                            <input type="number" id="health" class="input-field" value="20" oninput="generateBP()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-500 font-bold uppercase">Collision Width</label>
+                            <input type="number" id="width" class="input-field" value="0.6" step="0.1" oninput="generateBP()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-500 font-bold uppercase">Collision Height</label>
+                            <input type="number" id="height" class="input-field" value="1.8" step="0.1" oninput="generateBP()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="section-title">Behavior Toggles</h3>
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                        <label class="flex justify-between items-center cursor-pointer"><span>Gravitasi</span><input type="checkbox" id="gravity" onchange="generateBP()" checked></label>
+                        <label class="flex justify-between items-center cursor-pointer"><span>Menaiki Rel</span><input type="checkbox" id="rideRails" onchange="generateBP()"></label>
+                        <label class="flex justify-between items-center cursor-pointer"><span>Didorong Player</span><input type="checkbox" id="pushPlayer" onchange="generateBP()" checked></label>
+                        <label class="flex justify-between items-center cursor-pointer"><span>Didorong Piston</span><input type="checkbox" id="pushPiston" onchange="generateBP()" checked></label>
+                        <label class="flex justify-between items-center cursor-pointer"><span>Spawn Egg</span><input type="checkbox" id="spawnEgg" onchange="generateBP()" checked></label>
+                        <label class="flex justify-between items-center cursor-pointer font-bold text-blue-400"><span>Never Despawn</span><input type="checkbox" id="neverDespawn" onchange="generateBP()" checked></label>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="section-title">Component Groups</h3>
+                        <button onclick="addInput('group-list')" class="btn-add">+ Tambah Group</button>
+                    </div>
+                    <div id="group-list" class="space-y-2"></div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="section-title">Events</h3>
+                        <button onclick="addInput('event-list')" class="btn-add">+ Tambah Event</button>
+                    </div>
+                    <div id="event-list" class="space-y-2"></div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="section-title">Interact (On Click)</h3>
+                        <button onclick="addInteract()" class="btn-add">+ Tambah Interact</button>
+                    </div>
+                    <div id="interact-list" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <div class="bg-zinc-900/80 rounded-t-2xl px-5 py-3 border-x border-t border-zinc-800 flex items-center justify-between">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/30"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/30"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/30"></div>
+                    </div>
+                    <span class="text-xs font-mono text-zinc-500" id="fileName">behavior_packs/Project/entities/custom.json</span>
+                </div>
+                <pre id="outputBP"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- INPUT MANAGEMENT ---
+        function addInput(containerId) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-2 group";
+            div.innerHTML = `
+                <input type="text" class="input-field ${containerId === 'group-list' ? 'group-in' : 'event-in'}" placeholder="Nama..." oninput="generateBP()">
+                <button onclick="this.parentElement.remove(); generateBP()" class="btn-remove">✕</button>
+            `;
+            container.appendChild(div);
+            generateBP();
+        }
+
+        function addInteract() {
+            const container = document.getElementById('interact-list');
+            const div = document.createElement('div');
+            div.className = "p-4 bg-zinc-900/40 rounded-xl border border-zinc-800 space-y-2 relative group";
+            div.innerHTML = `
+                <button onclick="this.parentElement.remove(); generateBP()" class="absolute top-3 right-3 btn-remove">✕</button>
+                <div>
+                    <label class="text-[9px] text-zinc-600 font-bold uppercase ml-1">Item di Tangan</label>
+                    <input type="text" class="input-field int-item" placeholder="ex: minecraft:diamond" oninput="generateBP()">
+                </div>
+                <div>
+                    <label class="text-[9px] text-zinc-600 font-bold uppercase ml-1">Event yang Dipicu</label>
+                    <input type="text" class="input-field int-event" placeholder="ex: my:transform_event" oninput="generateBP()">
+                </div>
+            `;
+            container.appendChild(div);
+            generateBP();
+        }
+
+        // --- CORE LOGIC ---
+        function generateBP() {
+            const id = document.getElementById('entityId').value || 'my:custom_entity';
+            const family = document.getElementById('family').value || 'mob';
+            const health = parseInt(document.getElementById('health').value) || 20;
+            const width = parseFloat(document.getElementById('width').value) || 0.6;
+            const height = parseFloat(document.getElementById('height').value) || 1.8;
+            
+            const shortName = id.includes(':') ? id.split(':')[1] : id;
+            document.getElementById('fileName').innerText = `entities/${shortName}.json`;
+
+            // Struktur Base JSON
+            const json = {
+                "format_version": "1.16.0",
+                "minecraft:entity": {
+                    "description": {
+                        "identifier": id,
+                        "is_spawnable": document.getElementById('spawnEgg').checked,
+                        "is_summonable": true
+                    },
+                    "component_groups": {},
+                    "components": {
+                        "minecraft:type_family": { "family": [ family ] },
+                        "minecraft:health": { "value": health, "max": health },
+                        "minecraft:collision_box": { "width": width, "height": height },
+                        "minecraft:physics": { "has_gravity": document.getElementById('gravity').checked },
+                        "minecraft:pushable": {
+                            "is_pushable": document.getElementById('pushPlayer').checked,
+                            "is_pushable_by_piston": document.getElementById('pushPiston').checked
+                        }
+                    },
+                    "events": {}
+                }
+            };
+
+            // Toggle Optional Components
+            if (document.getElementById('neverDespawn').checked) {
+                json["minecraft:entity"]["components"]["minecraft:persistent"] = {};
+            }
+            if (document.getElementById('rideRails').checked) {
+                json["minecraft:entity"]["components"]["minecraft:can_ride_wheels"] = {};
+            }
+
+            // Map Dynamic Component Groups
+            document.querySelectorAll('.group-in').forEach(el => {
+                if(el.value) {
+                    json["minecraft:entity"]["component_groups"][el.value] = {
+                        "minecraft:is_sheared": {} // Placeholder component
+                    };
+                }
+            });
+
+            // Map Dynamic Events
+            document.querySelectorAll('.event-in').forEach(el => {
+                if(el.value) {
+                    json["minecraft:entity"]["events"][el.value] = {
+                        "add": { "component_groups": [] },
+                        "remove": { "component_groups": [] }
+                    };
+                }
+            });
+
+            // Map Dynamic Interactions
+            const interacts = document.querySelectorAll('#interact-list > div');
+            if(interacts.length > 0) {
+                json["minecraft:entity"]["components"]["minecraft:interact"] = { "interactions": [] };
+                interacts.forEach(div => {
+                    const item = div.querySelector('.int-item').value;
+                    const event = div.querySelector('.int-event').value;
+                    if(item || event) {
+                        json["minecraft:entity"]["components"]["minecraft:interact"]["interactions"].push({
+                            "on_interact": {
+                                "filters": { "test": "has_equipment", "subject": "other", "domain": "hand", "value": item }
+                            },
+                            "event": event
+                        });
+                    }
+                });
+            }
+
+            document.getElementById('outputBP').textContent = JSON.stringify(json, null, 4);
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('outputBP').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('button[onclick="copyToClipboard()"]');
+                const originalText = btn.innerText;
+                btn.innerText = "Tersalin! ✓";
+                btn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                }, 2000);
+            });
+        }
+
+        // Initialize
+        generateBP();
+    </script>
+</body>
+</html>

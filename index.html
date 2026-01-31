@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to MCBE Studio</title>
+    <title>MCBE Studio Pro 3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
@@ -45,6 +45,13 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
         }
+
+        .directory-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 2px 0;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center relative px-4">
@@ -52,18 +59,18 @@
     <div class="glow" style="top: 10%; left: 10%;"></div>
     <div class="glow" style="bottom: 10%; right: 10%;"></div>
 
-    <main class="max-w-4xl w-full text-center">
+    <main class="max-w-4xl w-full text-center py-20">
         <div class="inline-block px-4 py-1.5 mb-6 glass-card rounded-full">
             <span class="text-xs font-bold tracking-widest text-blue-400 uppercase">Script API 1.21.130+ Ready</span>
         </div>
 
         <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
-            Build Better <br>
-            <span class="gradient-text">MCBE Add-ons</span>
+            MCBE Studio Pro 3.0 <br>
+            <span class="gradient-text">Generate Code</span>
         </h1>
         
         <p class="text-zinc-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-            Generator kode otomatis untuk Behavior Pack, Resource Pack, dan Script API Minecraft Bedrock Edition dengan standar teknis terbaru.
+            Generator kode otomatis untuk Behavior Pack, Resource Pack, dan Script API dengan struktur folder yang akurat.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -75,35 +82,76 @@
             </a>
         </div>
 
-        <div id="features" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24 text-left">
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <h3 class="font-bold text-white mb-2">Instan Generator</h3>
-                <p class="text-zinc-500 text-sm">Hasilkan Manifest, Entity JSON, dan Script JS hanya dengan satu klik.</p>
+        <div class="mt-32 text-left">
+            <div class="mb-8 flex items-center gap-4">
+                <h2 class="text-2xl font-extrabold text-white italic uppercase tracking-tighter">Project Tree Structure</h2>
+                <div class="flex-grow h-[1px] bg-gradient-to-r from-blue-500/50 to-transparent"></div>
             </div>
 
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04 Pelajari Fitur 0 00-2.25 10.555a11.97 11.97 0 005.258 7.543 11.954 11.954 0 0010.998 0 11.97 11.97 0 005.258-7.543 12.031 12.031 0 00-2.25-10.555z"></path></svg>
-                </div>
-                <h3 class="font-bold text-white mb-2">Valid UUIDs</h3>
-                <p class="text-zinc-500 text-sm">Sistem otomatis menghasilkan UUID unik untuk setiap proyek agar tidak bentrok.</p>
-            </div>
+            <div class="glass-card p-8 rounded-3xl border-zinc-800/50">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 font-mono text-[13px]">
+                    
+                    <div class="space-y-1">
+                        <div class="directory-item text-blue-400 font-bold mb-3 border-b border-blue-500/20 pb-2">
+                             Project_BP
+                        </div>
+                        <div class="pl-4 border-l border-zinc-800 space-y-1">
+                            <div class="directory-item text-zinc-400"> manifest.json</div>
+                            
+                            <div class="directory-item text-zinc-300 font-semibold"> entities</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> custom.json</div>
+                            
+                            <div class="directory-item text-zinc-300 font-semibold"> items</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> custom.json</div>
 
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <div class="directory-item text-zinc-300 font-semibold"> blocks</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> custom.json</div>
+
+                            <div class="directory-item text-zinc-300"> animations</div>
+                            <div class="directory-item text-zinc-300"> animation_controllers</div>
+                            
+                            <div class="directory-item text-zinc-300"> scripts</div>
+                            <div class="pl-6 border-l border-zinc-800 text-emerald-400"> main.js</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="directory-item text-emerald-400 font-bold mb-3 border-b border-emerald-500/20 pb-2">
+                             Project_RP
+                        </div>
+                        <div class="pl-4 border-l border-zinc-800 space-y-1">
+                            <div class="directory-item text-zinc-400"> manifest.json</div>
+                            
+                            <div class="directory-item text-zinc-300"> entity</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> custom_mob.entity.json</div>
+
+                            <div class="directory-item text-zinc-300 font-semibold"> attachables</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> custom.json</div>
+
+                            <div class="directory-item text-zinc-300"> models</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> entity</div>
+
+                            <div class="directory-item text-zinc-300 font-semibold"> textures</div>
+                            <div class="pl-4 border-l border-zinc-800 space-y-1">
+                                <div class="directory-item text-zinc-400"> entity</div>
+                                <div class="directory-item text-zinc-400"> items</div>
+                                <div class="directory-item text-zinc-400"> blocks</div>
+                                <div class="directory-item text-zinc-500 italic text-[11px]"> terrain_texture.json</div>
+                                <div class="directory-item text-zinc-500 italic text-[11px]"> item_texture.json</div>
+                            </div>
+
+                            <div class="directory-item text-zinc-300"> texts</div>
+                            <div class="pl-6 border-l border-zinc-800 text-zinc-500"> en_US.lang</div>
+                        </div>
+                    </div>
+
                 </div>
-                <h3 class="font-bold text-white mb-2">Modern UI</h3>
-                <p class="text-zinc-500 text-sm">Dukungan penuh untuk Server UI Module (@minecraft/server-ui).</p>
             </div>
         </div>
     </main>
 
     <footer class="mt-20 py-8 border-t border-zinc-800 w-full text-center">
-        <p class="text-zinc-600 text-xs tracking-widest uppercase">MCBE Studio v1.0 • Created with Passion</p>
+        <p class="text-zinc-600 text-xs tracking-widest uppercase">MCBE Studio Pro 3.0</p>
     </footer>
 
 </body>
