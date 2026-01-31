@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Manifest Studio v3</title>
+    <title>Manifest Studio v3.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --bg-dark: #121212;
             --card-bg: #1e1e26;
             --input-bg: #2d2d3a;
+            --accent: #00ff87;
         }
 
         * { box-sizing: border-box; }
@@ -38,7 +39,6 @@
             overflow: hidden;
         }
 
-        /* Navigasi Tab Tetap Di Atas */
         .tabs-header {
             display: flex;
             background: #15151b;
@@ -60,7 +60,6 @@
             transition: 0.3s;
         }
 
-        /* Status Aktif Tombol */
         .tab-btn.active-rp { background: var(--rp-color) !important; color: white !important; }
         .tab-btn.active-bp { background: var(--bp-color) !important; color: white !important; }
 
@@ -69,7 +68,7 @@
         .field { margin-bottom: 15px; }
         label { display: block; font-size: 10px; font-weight: 600; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
 
-        input {
+        input, select {
             width: 100%;
             background: var(--input-bg);
             border: 2px solid #333;
@@ -80,16 +79,31 @@
             font-size: 14px;
         }
 
+        .script-section {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px dashed #444;
+            margin-top: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input { width: auto; }
+
         .actions {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
             margin: 15px 0;
         }
 
         .btn {
             flex: 1;
-            min-width: 100px;
             padding: 12px;
             border: none;
             border-radius: 10px;
@@ -102,28 +116,16 @@
         .btn-copy { background: #444; }
         .btn-dl { background: #007acc; }
 
-        /* Area Kode */
         pre {
             background: #000;
             padding: 15px;
             border-radius: 12px;
             font-family: monospace;
             font-size: 11px;
-            color: #00ff87;
+            color: var(--accent);
             border: 1px solid #333;
             white-space: pre-wrap;
-            word-wrap: break-word;
-            margin-top: 10px;
-        }
-
-        .help-text {
-            font-size: 10px;
-            color: #ff9800;
-            margin-bottom: 10px;
-            display: none;
-            background: rgba(255, 152, 0, 0.1);
-            padding: 8px;
-            border-radius: 5px;
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -136,18 +138,37 @@
     </div>
 
     <div class="content">
-        <div id="helpMsg" class="help-text">
-            ⚠️ <b>Penting:</b> Masukkan UUID Header dari Resource Pack Anda di bawah agar BP ini terhubung.
-        </div>
-
         <div class="field">
             <label>Nama Pack</label>
             <input type="text" id="pName" value="My New Pack" oninput="updateJSON()">
         </div>
 
-        <div class="field" id="bpDependency" style="display: none;">
-            <label>Link RP UUID (Header)</label>
-            <input type="text" id="rpUUID" placeholder="Tempel UUID RP di sini..." oninput="updateJSON()">
+        <div id="bpOptions" style="display: none;">
+            <div class="field">
+                <label>RP UUID Link (Dependency)</label>
+                <input type="text" id="rpUUID" placeholder="Tempel UUID RP di sini..." oninput="updateJSON()">
+            </div>
+
+            <div class="script-section">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useScript" onchange="updateJSON()">
+                    <label style="margin-bottom:0; color: var(--accent);">Gunakan Script API</label>
+                </div>
+
+                <div id="scriptControls" style="display:none;">
+                    <div class="field">
+                        <label>Module Type</label>
+                        <select id="sModule" onchange="updateJSON()">
+                            <option value="@minecraft/server">@minecraft/server (Core)</option>
+                            <option value="@minecraft/server-ui">@minecraft/server-ui (UI)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Module Version</label>
+                        <input type="text" id="sVersion" value="1.13.0" oninput="updateJSON()">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="actions">
@@ -161,81 +182,90 @@
 
 <script>
     let mode = 'rp';
-    let idData = {
+    // Generate UUID tetap untuk sesi ini agar tidak berubah setiap ketik
+    const ids = {
         rp: { h: crypto.randomUUID(), m: crypto.randomUUID() },
-        bp: { h: crypto.randomUUID(), m: crypto.randomUUID() }
+        bp: { h: crypto.randomUUID(), m: crypto.randomUUID(), s: crypto.randomUUID() }
     };
 
     function toggleMode(target) {
         mode = target;
-        
-        // Update tampilan tombol tab
         document.getElementById('btnRP').classList.toggle('active-rp', mode === 'rp');
         document.getElementById('btnBP').classList.toggle('active-bp', mode === 'bp');
-
-        // Tampilkan/Sembunyikan input khusus BP
-        const depBox = document.getElementById('bpDependency');
-        const help = document.getElementById('helpMsg');
-        
-        if (mode === 'bp') {
-            depBox.style.display = 'block';
-            help.style.display = 'block';
-        } else {
-            depBox.style.display = 'none';
-            help.style.display = 'none';
-        }
-        
+        document.getElementById('bpOptions').style.display = (mode === 'bp') ? 'block' : 'none';
         updateJSON();
     }
 
     function updateJSON() {
-        const name = document.getElementById('pName').value || "Unnamed";
-        const rpLink = document.getElementById('rpUUID').value;
-        const currentIds = idData[mode];
+        const name = document.getElementById('pName').value || "Unnamed Pack";
+        const rpLink = document.getElementById('rpUUID').value.trim();
+        const useScript = document.getElementById('useScript').checked;
+        
+        // Toggle visibility script controls
+        document.getElementById('scriptControls').style.display = useScript ? 'block' : 'none';
 
         const manifest = {
             format_version: 2,
             header: {
                 name: name,
-                description: "Generated by Studio",
-                uuid: currentIds.h,
+                description: "Dibuat dengan Manifest Studio",
+                uuid: ids[mode].h,
                 version: [1, 0, 0],
                 min_engine_version: [1, 21, 0]
             },
             modules: [
                 {
-                    description: "Module Pack",
+                    description: "Main Module",
                     type: (mode === 'rp' ? "resources" : "data"),
-                    uuid: currentIds.m,
+                    uuid: ids[mode].m,
                     version: [1, 0, 0]
                 }
             ]
         };
 
-        // Jika mode BP dan ada link RP, masukkan ke dependency
-        if (mode === 'bp' && rpLink.trim() !== "") {
-            manifest.dependencies = [{ uuid: rpLink.trim(), version: [1, 0, 0] }];
+        // Logika Script API
+        if (mode === 'bp' && useScript) {
+            // Tambah module script
+            manifest.modules.push({
+                description: "Scripting Module",
+                language: "javascript",
+                type: "script",
+                uuid: ids.bp.s,
+                entry: "scripts/main.js",
+                version: [1, 0, 0]
+            });
+
+            // Tambah dependency module yang dipilih
+            const sMod = document.getElementById('sModule').value;
+            const sVer = document.getElementById('sVersion').value;
+            
+            manifest.dependencies = [
+                { module_name: sMod, version: sVer }
+            ];
+        }
+
+        // Logika Link ke RP (Jika ada)
+        if (mode === 'bp' && rpLink !== "") {
+            if(!manifest.dependencies) manifest.dependencies = [];
+            manifest.dependencies.push({ uuid: rpLink, version: [1, 0, 0] });
         }
 
         document.getElementById('codeArea').textContent = JSON.stringify(manifest, null, 4);
     }
 
     function copyJSON() {
-        const code = document.getElementById('codeArea').textContent;
-        navigator.clipboard.writeText(code);
-        alert("Berhasil disalin ke clipboard!");
+        navigator.clipboard.writeText(document.getElementById('codeArea').textContent);
+        alert("Kode disalin!");
     }
 
     function downloadJSON() {
-        const code = document.getElementById('codeArea').textContent;
-        const blob = new Blob([code], {type: "application/json"});
+        const blob = new Blob([document.getElementById('codeArea').textContent], {type: "application/json"});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = "manifest.json";
         a.click();
     }
 
-    // Jalankan pertama kali
     updateJSON();
 </script>
 
